@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorF0"
+    tools:context="net.shunqing365.guard.ui.LoginActivity">
+
+    <include
+        android:id="@+id/top"
+        layout="@layout/basetitle"
+        android:visibility="gone"/>
+
+    <net.shunqing365.guard.view.ZQImageViewRoundOval
+        android:id="@+id/img_bg"
+        android:layout_width="128dp"
+        android:layout_height="128dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/logo510"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/login_winxin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.501"/>
+
+    <TextView
+        android:id="@+id/login_winxin"
+        android:layout_width="255dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="72dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/login_shape"
+        android:gravity="center"
+        android:paddingStart="@dimen/space_30"
+        android:text="@string/login_wx"
+        android:textColor="@color/white"
+        android:textSize="@dimen/space_18"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@mipmap/wechat_logo"
+        android:tint="@android:color/white"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintBottom_toBottomOf="@+id/login_winxin"
+        app:layout_constraintHorizontal_bias="0.311"
+        app:layout_constraintLeft_toLeftOf="@+id/login_winxin"
+        app:layout_constraintRight_toRightOf="@+id/login_winxin"
+        app:layout_constraintTop_toTopOf="@+id/login_winxin"/>
+</android.support.constraint.ConstraintLayout>
