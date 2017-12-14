@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:padding="@dimen/activity_vertical_margin">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="@dimen/space_80"
+        android:layout_height="@dimen/space_80"
+        android:src="@mipmap/logo"/>
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="我是临时配置的样式,可以点我"/>
+</LinearLayout>
