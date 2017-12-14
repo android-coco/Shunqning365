@@ -10,5 +10,9 @@ public class AppUtil
     //主域名
     public static final String BASE_URL = "http://service.shunqing365.com";
     //接口名
-    public static final String INTFACE_URL = BASE_URL + "/interface/";
+    public static final String API_URL = BASE_URL + "/interface";
+    //登录
+    public static final String LOGIN = "/login";
+    //我的终端
+    public static final String TERMINAL_LIST = "/terminal_data";
 }

@@ -11,8 +11,12 @@ import com.umeng.socialize.UMShareConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import net.shunqing365.guard.R;
+import net.shunqing365.guard.adapter.CustomDialogFactory;
+import net.shunqing365.guard.util.AppUtil;
 import net.shunqing365.guard.view.ZQImageViewRoundOval;
 
+import org.yh.library.okhttp.YHRequestFactory;
+import org.yh.library.okhttp.callback.HttpCallBack;
 import org.yh.library.ui.BindView;
 import org.yh.library.ui.YHViewInject;
 import org.yh.library.utils.LogUtils;
@@ -76,7 +80,7 @@ public class LoginActivity extends BaseActiciy
         @Override
         public void onStart(SHARE_MEDIA platform)
         {
-            YHLoadingDialog.make(aty).show();
+            YHLoadingDialog.make(aty, new CustomDialogFactory()).setMessage("授权中").show();
         }
 
         /**
@@ -88,8 +92,14 @@ public class LoginActivity extends BaseActiciy
         @Override
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data)
         {
-            YHLoadingDialog.make(aty).cancelDialog();
-            YHViewInject.create().showTips("登录成功");
+            YHLoadingDialog.cancel();
+            YHLoadingDialog.make(aty, new CustomDialogFactory()).setMessage("登录中").show();
+            if (!StringUtils.isEmpty(data)){
+                login(data);
+            }else{
+                YHViewInject.create().showTips("无法获取用户信息！");
+            }
+
             LogUtils.e(TAG, data);
         }
 
@@ -103,7 +113,7 @@ public class LoginActivity extends BaseActiciy
         public void onError(SHARE_MEDIA platform, int action, Throwable t)
         {
             YHViewInject.create().showTips("授权失败：" + t.getMessage());
-            YHLoadingDialog.make(aty).cancelDialog();
+            YHLoadingDialog.cancel();
         }
 
         /**
@@ -115,9 +125,42 @@ public class LoginActivity extends BaseActiciy
         public void onCancel(SHARE_MEDIA platform, int action)
         {
             YHViewInject.create().showTips("取消登录");
-            YHLoadingDialog.make(aty).cancelDialog();
+            YHLoadingDialog.cancel();
         }
     };
+
+    /**
+     * 登录
+     * @param data  用户信息
+     */
+    private void login(Map<String, String> data)
+    {
+        String params = "{\"unionid\":\"" + data.get("unionid") + "\",\"openid\":\"" +
+                data.get("openid") + "\"}";
+        YHRequestFactory.getRequestManger().postString(AppUtil.API_URL, AppUtil.LOGIN, null, params, new HttpCallBack()
+        {
+            @Override
+            public void onSuccess(String t)
+            {
+                super.onSuccess(t);
+                YHViewInject.create().showTips("登录成功");
+            }
+
+            @Override
+            public void onFailure(int errorNo, String strMsg)
+            {
+                super.onFailure(errorNo, strMsg);
+                YHViewInject.create().showTips("登录失败");
+            }
+
+            @Override
+            public void onFinish()
+            {
+                super.onFinish();
+                YHLoadingDialog.cancel();
+            }
+        }, TAG);
+    }
 
     @Override
     public void initWidget()
@@ -134,13 +177,7 @@ public class LoginActivity extends BaseActiciy
         switch (v.getId())
         {
             case R.id.login_winxin:
-                final boolean isauth = umShareAPI.isAuthorize(aty, SHARE_MEDIA.WEIXIN);
                 YHViewInject.create().showTips("登录");
-                if (isauth)
-                {
-                    umShareAPI.deleteOauth(aty, SHARE_MEDIA.WEIXIN, authListener);
-                }
-                umShareAPI.doOauthVerify(this, SHARE_MEDIA.WEIXIN, authListener);
                 umShareAPI.getPlatformInfo(aty, SHARE_MEDIA.WEIXIN, authListener);
                 break;
         }
@@ -156,16 +193,6 @@ public class LoginActivity extends BaseActiciy
         }
     }
 
-    @Override
-    protected void onDestroy()
-    {
-        super.onDestroy();
-        if (!StringUtils.isEmpty(umShareAPI))
-        {
-            umShareAPI.release();
-        }
-
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState)
@@ -175,5 +202,16 @@ public class LoginActivity extends BaseActiciy
         {
             umShareAPI.onSaveInstanceState(outState);
         }
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        if (!StringUtils.isEmpty(umShareAPI))
+        {
+            umShareAPI.release();
+        }
+
     }
 }
