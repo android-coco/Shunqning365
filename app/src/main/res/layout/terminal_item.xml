@@ -6,22 +6,35 @@
                 android:background="@drawable/btn_found_list_bg"
                 android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/timing_open"
-        android:layout_width="72dp"
-        android:layout_height="30dp"
+    <ImageView
+        android:id="@+id/img_watch"
+        android:layout_width="@dimen/space_40"
+        android:layout_height="@dimen/space_40"
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
         android:layout_marginLeft="4dp"
-        android:background="@mipmap/opend"
+        android:src="@mipmap/icon_watch"
+        android:layout_marginStart="@dimen/space_5"
         android:gravity="center"
-        android:visibility="gone"/>
-
+        android:tint="@color/actionsheet_blue"
+        android:visibility="visible"/>
+    <ImageView
+        android:id="@+id/img_watch1"
+        android:layout_width="@dimen/space_40"
+        android:layout_height="@dimen/space_40"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="4dp"
+        android:src="@mipmap/icon_watch"
+        android:layout_marginStart="@dimen/space_5"
+        android:gravity="center"
+        android:tint="@color/colorYellow"
+        android:visibility="visible"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_toRightOf="@id/timing_open"
+        android:layout_toRightOf="@id/img_watch"
         android:orientation="vertical"
         android:paddingBottom="10dp"
         android:paddingTop="10dp">
@@ -39,7 +52,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="12.0dip"
                 android:paddingRight="4.0dip"
-                android:text="定位方式："
+                android:text="终端名称："
                 android:textColor="@android:color/black"
                 android:textSize="@dimen/space_16"
                 android:textStyle="bold"/>
@@ -61,6 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_5"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <TextView
@@ -92,6 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_5"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <TextView

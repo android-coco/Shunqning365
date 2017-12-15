@@ -17,6 +17,8 @@ public class AppUtil
     public static final String TERMINAL_LIST = "/terminal_data";
     //添加终端
     public static final String TERMINAL_ADD = "/terminal_addnew";
+    //删除终端
+    public static final String TERMINAL_DEL = "/terminal_unbound";
 
 
 
