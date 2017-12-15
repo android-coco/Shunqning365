@@ -10,20 +10,30 @@ import net.shunqing365.guard.adapter.TerminalAdapter;
 import net.shunqing365.guard.bean.TerminalJosnBen;
 import net.shunqing365.guard.util.AppUtil;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.yh.library.adapter.I_YHItemClickListener;
+import org.yh.library.bean.EventBusBean;
 import org.yh.library.okhttp.YHRequestFactory;
 import org.yh.library.okhttp.callback.HttpCallBack;
 import org.yh.library.ui.BindView;
 import org.yh.library.ui.YHActivityStack;
+import org.yh.library.ui.YHViewInject;
+import org.yh.library.utils.JsonUitl;
 import org.yh.library.utils.LogUtils;
 import org.yh.library.utils.PreferenceUtils;
+import org.yh.library.utils.StringUtils;
 import org.yh.library.view.YHAlertDialog;
 import org.yh.library.view.YHRecyclerView;
+import org.yh.library.view.YHSheetDialog;
+import org.yh.library.view.loading.dialog.YHLoadingDialog;
 import org.yh.library.view.yhrecyclerview.ProgressStyle;
 
 import java.util.ArrayList;
 
+import yh.org.shunqinglib.aty.LocationByGDActivity;
 import yh.org.shunqinglib.base.BaseActiciy;
+import yh.org.shunqinglib.utils.GlobalUtils;
 
 /**
  * 我的终端列表
@@ -88,7 +98,6 @@ public class TerminalActivity extends BaseActiciy implements
             @Override
             public void onRefresh()
             {
-//                page = 1;
                 mAdapter.getDatas().clear();//必须在数据更新前清空，不能太早
                 getData();
             }
@@ -96,14 +105,6 @@ public class TerminalActivity extends BaseActiciy implements
             @Override
             public void onLoadMore()
             {
-//                //page++;
-//                if (page <= TOTAL_PAGE) {//小于总页数就加载更多
-//                    // loading more
-//                    getData();
-//                } else {
-//                    //the end
-//                    mRecyclerView.setNoMore(true);
-//                }
             }
         });
         mRecyclerView.refresh();
@@ -126,9 +127,9 @@ public class TerminalActivity extends BaseActiciy implements
             @Override
             public void onClick(View v)
             {
-                PreferenceUtils.clean(aty,AppUtil.USER_XML);//清空用户信息退出
+                PreferenceUtils.clean(aty, AppUtil.USER_XML);//清空用户信息退出
                 YHActivityStack.create().finishAllActivity();
-                showActivity(aty,LoginActivity.class);
+                showActivity(aty, LoginActivity.class);
             }
         }).setPositiveButton("取消", new View.OnClickListener()
         {
@@ -138,20 +139,6 @@ public class TerminalActivity extends BaseActiciy implements
 
             }
         }).show();
-    }
-
-    @Override
-    public void widgetClick(View v)
-    {
-        super.widgetClick(v);
-//        switch (v.getId())
-//        {
-//            case R.id.btn:
-//                GlobalUtils.HOME_HOST = "http://www.shunqing365.net";//接口地址
-//                GlobalUtils.DEIVER_SN = "A100004DC69883";//SN号
-//                showActivity(aty, LocationByGDActivity.class);
-//                break;
-//        }
     }
 
     private void getData()
@@ -165,29 +152,31 @@ public class TerminalActivity extends BaseActiciy implements
                             public void onSuccess(String t)
                             {
                                 super.onSuccess(t);
-                                LogUtils.e(TAG, t);
 
-        //                        final JsonMdrSdModel jsonData = JsonUitl.stringToTObject
-        //                                (t, JsonMdrSdModel.class);
-        //                        String resultCode = jsonData.getResultCode();
-        //                        if ("0".equals(resultCode))
-        //                        {
-        //                            if (StringUtils.isEmpty(jsonData.getDatas()))
-        //                            {
-        //                                id_empty_text.setText("暂无数据!");
-        //                                mRecyclerView.setEmptyView(empty_layout);//没有数据的空布局
-        //                            } else
-        //                            {
-        //                                data.addAll(jsonData.getDatas());
-        //                                mAdapter.setDatas(data);
-        //                            }
-        //                        } else
-        //                        {
-        //                            id_empty_text.setText("Code:" + resultCode);
-        //                            mRecyclerView.setEmptyView(empty_layout);
-        //                        }
-        //                        //刷新完毕
-        //                        mRecyclerView.refreshComplete();
+                                final TerminalJosnBen jsonData = JsonUitl.stringToTObject
+                                        (t, TerminalJosnBen.class);
+                                LogUtils.e(TAG, jsonData);
+                                String resultCode = jsonData.getResultCode();
+                                if ("0".equals(resultCode))
+                                {
+                                    if (StringUtils.isEmpty(jsonData.getDatas()))
+                                    {
+                                        id_empty_text.setText("暂无终端!");
+                                        mRecyclerView.setEmptyView(empty_layout);//没有数据的空布局
+                                    }
+                                    else
+                                    {
+                                        data.addAll(jsonData.getDatas());
+                                        mAdapter.setDatas(data);
+                                    }
+                                }
+                                else
+                                {
+                                    id_empty_text.setText("Code:" + resultCode);
+                                    mRecyclerView.setEmptyView(empty_layout);
+                                }
+                                //刷新完毕
+                                mRecyclerView.refreshComplete();
                             }
 
                             @Override
@@ -211,6 +200,68 @@ public class TerminalActivity extends BaseActiciy implements
                         }, TAG);
     }
 
+    /**
+     * 删除设备
+     *
+     * @param terminalModel 设备对象
+     */
+    private void delTerminal(final TerminalJosnBen.TerminalModel terminalModel)
+    {
+        YHLoadingDialog.make(aty).setMessage("删除中。。。")//提示消息
+                .setCancelable(false).show();
+        String params = "{\"uid\":\"" + uid + "\",\"sn\":\"" + terminalModel.getProductSn() + "\"}";
+        YHRequestFactory.getRequestManger().postString(AppUtil.API_URL, AppUtil.TERMINAL_DEL,
+                null, params, new
+                        HttpCallBack()
+                        {
+                            @Override
+                            public void onSuccess(String t)
+                            {
+                                super.onSuccess(t);
+                                LogUtils.e(TAG, t);
+                                final TerminalJosnBen jsonData = JsonUitl.stringToTObject
+                                        (t, TerminalJosnBen.class);
+                                String resultCode = jsonData.getResultCode();
+                                if ("0".equals(resultCode))
+                                {
+                                    YHViewInject.create().showTips("删除成功");
+                                    data.remove(terminalModel);
+                                    if (StringUtils.isEmpty(data))
+                                    {
+                                        id_empty_text.setText("暂无终端!");
+                                        mRecyclerView.setEmptyView(empty_layout);//没有数据的空布局
+                                    }
+                                    else
+                                    {
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                                else if ("2".equals(resultCode))
+                                {
+                                    YHViewInject.create().showTips("删除失败,设备不存在");
+                                }
+                                else
+                                {
+                                    YHViewInject.create().showTips("添加失败,未知原因code" + resultCode);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int errorNo, String strMsg)
+                            {
+                                super.onFailure(errorNo, strMsg);
+                                YHViewInject.create().showTips("删除失败" + strMsg);
+                            }
+
+                            @Override
+                            public void onFinish()
+                            {
+                                super.onFinish();
+                                YHLoadingDialog.cancel();
+                            }
+                        }, TAG);
+    }
+
     @Override
     public boolean onItemLongClick(View view, TerminalJosnBen.TerminalModel data, int position)
     {
@@ -218,8 +269,47 @@ public class TerminalActivity extends BaseActiciy implements
     }
 
     @Override
-    public void onItemClick(View view, TerminalJosnBen.TerminalModel data, int position)
+    public void onItemClick(View view, final TerminalJosnBen.TerminalModel data, int position)
     {
+        new YHSheetDialog(aty)
+                .builder()
+                .setCancelable(false)
+                .setCanceledOnTouchOutside(false)
+                .addSheetItem("查看", YHSheetDialog.SheetItemColor.Blue,
+                        new YHSheetDialog.OnSheetItemClickListener()
+                        {
+                            @Override
+                            public void onClick(int which)
+                            {
+                                if (!StringUtils.isEmpty(data) && !StringUtils.isEmpty(data
+                                        .getProductSn()))
+                                {
+                                    GlobalUtils.HOME_HOST = "http://www.shunqing365.net";//接口地址
+                                    GlobalUtils.DEIVER_SN = data.getProductSn();//SN号
+                                    showActivity(aty, LocationByGDActivity.class);
+                                }
+                                else
+                                {
+                                    YHViewInject.create().showTips("无法获取设备信息,请刷新设备列表！");
+                                }
+                            }
+                        })
+                .addSheetItem("删除", YHSheetDialog.SheetItemColor.Red,
+                        new YHSheetDialog.OnSheetItemClickListener()
+                        {
+                            @Override
+                            public void onClick(int which)
+                            {
+                                delTerminal(data);
+                            }
+                        }).show();
+    }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void ploginOut(EventBusBean msg)
+    {
+        mAdapter.getDatas().clear();//必须在数据更新前清空，不能太早
+        getData();
     }
 }
