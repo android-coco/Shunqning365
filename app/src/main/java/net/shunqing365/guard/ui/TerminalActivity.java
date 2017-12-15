@@ -14,6 +14,7 @@ import org.yh.library.adapter.I_YHItemClickListener;
 import org.yh.library.okhttp.YHRequestFactory;
 import org.yh.library.okhttp.callback.HttpCallBack;
 import org.yh.library.ui.BindView;
+import org.yh.library.ui.YHActivityStack;
 import org.yh.library.utils.LogUtils;
 import org.yh.library.utils.PreferenceUtils;
 import org.yh.library.view.YHAlertDialog;
@@ -126,6 +127,7 @@ public class TerminalActivity extends BaseActiciy implements
             public void onClick(View v)
             {
                 PreferenceUtils.clean(aty,AppUtil.USER_XML);//清空用户信息退出
+                YHActivityStack.create().finishAllActivity();
                 showActivity(aty,LoginActivity.class);
             }
         }).setPositiveButton("取消", new View.OnClickListener()
@@ -165,27 +167,27 @@ public class TerminalActivity extends BaseActiciy implements
                                 super.onSuccess(t);
                                 LogUtils.e(TAG, t);
 
-//                        final JsonMdrSdModel jsonData = JsonUitl.stringToTObject
-//                                (t, JsonMdrSdModel.class);
-//                        String resultCode = jsonData.getResultCode();
-//                        if ("0".equals(resultCode))
-//                        {
-//                            if (StringUtils.isEmpty(jsonData.getDatas()))
-//                            {
-//                                id_empty_text.setText("暂无数据!");
-//                                mRecyclerView.setEmptyView(empty_layout);//没有数据的空布局
-//                            } else
-//                            {
-//                                data.addAll(jsonData.getDatas());
-//                                mAdapter.setDatas(data);
-//                            }
-//                        } else
-//                        {
-//                            id_empty_text.setText("Code:" + resultCode);
-//                            mRecyclerView.setEmptyView(empty_layout);
-//                        }
-//                        //刷新完毕
-//                        mRecyclerView.refreshComplete();
+        //                        final JsonMdrSdModel jsonData = JsonUitl.stringToTObject
+        //                                (t, JsonMdrSdModel.class);
+        //                        String resultCode = jsonData.getResultCode();
+        //                        if ("0".equals(resultCode))
+        //                        {
+        //                            if (StringUtils.isEmpty(jsonData.getDatas()))
+        //                            {
+        //                                id_empty_text.setText("暂无数据!");
+        //                                mRecyclerView.setEmptyView(empty_layout);//没有数据的空布局
+        //                            } else
+        //                            {
+        //                                data.addAll(jsonData.getDatas());
+        //                                mAdapter.setDatas(data);
+        //                            }
+        //                        } else
+        //                        {
+        //                            id_empty_text.setText("Code:" + resultCode);
+        //                            mRecyclerView.setEmptyView(empty_layout);
+        //                        }
+        //                        //刷新完毕
+        //                        mRecyclerView.refreshComplete();
                             }
 
                             @Override

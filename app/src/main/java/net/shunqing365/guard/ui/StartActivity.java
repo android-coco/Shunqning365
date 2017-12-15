@@ -26,11 +26,11 @@ public class StartActivity extends BaseActiciy
         String uid = PreferenceUtils.readString(aty, AppUtil.USER_XML, AppUtil.UID);
         if (StringUtils.isEmpty(uid))
         {
-            showActivity(aty, LoginActivity.class);
+            skipActivity(aty, LoginActivity.class);
         }
         else
         {
-            showActivity(aty, TerminalActivity.class);
+            skipActivity(aty, TerminalActivity.class);
         }
     }
 }
