@@ -1,6 +1,5 @@
 package net.shunqing365.guard.ui;
 
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,7 +18,6 @@ import org.yh.library.utils.JsonUitl;
 import org.yh.library.utils.LogUtils;
 import org.yh.library.utils.PreferenceUtils;
 import org.yh.library.view.loading.dialog.YHLoadingDialog;
-import org.zackratos.ultimatebar.UltimateBar;
 
 import yh.org.shunqinglib.base.BaseActiciy;
 
@@ -38,8 +36,6 @@ public class AddTerminalActivity extends BaseActiciy
     @Override
     public void setRootView()
     {
-        UltimateBar ultimateBar = new UltimateBar(this);
-        ultimateBar.setColorBar(ContextCompat.getColor(this, R.color.colorPrimary));
         setContentView(R.layout.activity_add_terminal);
     }
     @Override
