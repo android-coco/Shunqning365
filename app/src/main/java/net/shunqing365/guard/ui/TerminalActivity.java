@@ -125,7 +125,8 @@ public class TerminalActivity extends BaseActiciy implements
             @Override
             public void onClick(View v)
             {
-
+                PreferenceUtils.clean(aty,AppUtil.USER_XML);//清空用户信息退出
+                showActivity(aty,LoginActivity.class);
             }
         }).setPositiveButton("取消", new View.OnClickListener()
         {
