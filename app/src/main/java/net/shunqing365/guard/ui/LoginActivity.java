@@ -12,6 +12,7 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import net.shunqing365.guard.R;
 import net.shunqing365.guard.adapter.CustomDialogFactory;
+import net.shunqing365.guard.bean.LoginJosnBen;
 import net.shunqing365.guard.util.AppUtil;
 import net.shunqing365.guard.view.ZQImageViewRoundOval;
 
@@ -19,7 +20,9 @@ import org.yh.library.okhttp.YHRequestFactory;
 import org.yh.library.okhttp.callback.HttpCallBack;
 import org.yh.library.ui.BindView;
 import org.yh.library.ui.YHViewInject;
+import org.yh.library.utils.JsonUitl;
 import org.yh.library.utils.LogUtils;
+import org.yh.library.utils.PreferenceUtils;
 import org.yh.library.utils.StringUtils;
 import org.yh.library.view.loading.dialog.YHLoadingDialog;
 import org.zackratos.ultimatebar.UltimateBar;
@@ -133,7 +136,7 @@ public class LoginActivity extends BaseActiciy
      * 登录
      * @param data  用户信息
      */
-    private void login(Map<String, String> data)
+    private void login(final Map<String, String> data)
     {
         String params = "{\"unionid\":\"" + data.get("unionid") + "\",\"openid\":\"" +
                 data.get("openid") + "\"}";
@@ -143,7 +146,21 @@ public class LoginActivity extends BaseActiciy
             public void onSuccess(String t)
             {
                 super.onSuccess(t);
-                YHViewInject.create().showTips("登录成功");
+
+                final LoginJosnBen jsonData = JsonUitl.stringToTObject
+                        (t, LoginJosnBen.class);
+                String resultCode = jsonData.getResultCode();
+                if ("0".equals(resultCode))
+                {
+                    YHViewInject.create().showTips("登录成功");//跳转
+                    PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.UID,jsonData.getUid());
+                    PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.UNIONID,data.get("unionid"));
+                    PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.OPENID,data.get("openid"));
+                    showActivity(aty, TerminalActivity.class);
+                } else
+                {
+                    YHViewInject.create().showTips("登录失败");
+                }
             }
 
             @Override
