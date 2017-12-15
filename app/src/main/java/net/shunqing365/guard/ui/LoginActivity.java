@@ -156,7 +156,7 @@ public class LoginActivity extends BaseActiciy
                     PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.UID,jsonData.getUid());
                     PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.UNIONID,data.get("unionid"));
                     PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.OPENID,data.get("openid"));
-                    showActivity(aty, TerminalActivity.class);
+                    skipActivity(aty, TerminalActivity.class);
                 } else
                 {
                     YHViewInject.create().showTips("登录失败");
