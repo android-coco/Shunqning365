@@ -1,6 +1,7 @@
 package net.shunqing365.guard.ui;
 
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import org.yh.library.utils.JsonUitl;
 import org.yh.library.utils.LogUtils;
 import org.yh.library.utils.PreferenceUtils;
 import org.yh.library.utils.StringUtils;
+import org.yh.library.utils.SystemUtils;
 import org.yh.library.view.YHAlertDialog;
 import org.yh.library.view.YHRecyclerView;
 import org.yh.library.view.YHSheetDialog;
@@ -155,7 +157,7 @@ public class TerminalActivity extends BaseActiciy implements
 
                                 final TerminalJosnBen jsonData = JsonUitl.stringToTObject
                                         (t, TerminalJosnBen.class);
-                                LogUtils.e(TAG, jsonData);
+                                //LogUtils.e(TAG, jsonData);
                                 String resultCode = jsonData.getResultCode();
                                 if ("0".equals(resultCode))
                                 {
@@ -176,7 +178,8 @@ public class TerminalActivity extends BaseActiciy implements
                                     mRecyclerView.setEmptyView(empty_layout);
                                 }
                                 //刷新完毕
-                                mRecyclerView.refreshComplete();
+                                mRecyclerView.reset();
+                                //LogUtils.e(TAG,"FASDFADSFADSF:"+mAdapter.getDatas());
                             }
 
                             @Override
@@ -281,16 +284,20 @@ public class TerminalActivity extends BaseActiciy implements
                             @Override
                             public void onClick(int which)
                             {
+                                YHLoadingDialog.make(aty).setMessage("加载中")//提示消息
+                                        .setCancelable(false).show();
                                 if (!StringUtils.isEmpty(data) && !StringUtils.isEmpty(data
                                         .getProductSn()))
                                 {
                                     GlobalUtils.HOME_HOST = "http://www.shunqing365.net";//接口地址
                                     GlobalUtils.DEIVER_SN = data.getProductSn();//SN号
                                     showActivity(aty, LocationByGDActivity.class);
+                                    YHLoadingDialog.cancel();
                                 }
                                 else
                                 {
                                     YHViewInject.create().showTips("无法获取设备信息,请刷新设备列表！");
+                                    YHLoadingDialog.cancel();
                                 }
                             }
                         })
@@ -300,7 +307,22 @@ public class TerminalActivity extends BaseActiciy implements
                             @Override
                             public void onClick(int which)
                             {
-                                delTerminal(data);
+                                new YHAlertDialog(aty).builder().setMsg("删除后无法恢复,确认删除？").setNegativeButton("确定", new View
+                                        .OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View v)
+                                    {
+                                        delTerminal(data);
+                                    }
+                                }).setPositiveButton("取消", new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View v)
+                                    {
+
+                                    }
+                                }).show();
                             }
                         }).show();
     }
@@ -311,5 +333,32 @@ public class TerminalActivity extends BaseActiciy implements
     {
         mAdapter.getDatas().clear();//必须在数据更新前清空，不能太早
         getData();
+    }
+
+
+    // 按两下返回键退出程序
+    private long exitTime = 0;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN)
+        {
+            if ((System.currentTimeMillis() - exitTime) > 2000)
+            {
+                YHViewInject.create().showTips("再按一次退出程序");
+                exitTime = System.currentTimeMillis();
+            }
+            else
+            {
+                SystemUtils.goHome(aty);
+            }
+            return true;
+        }
+        else
+        {
+            return true;
+        }
+
     }
 }
