@@ -59,10 +59,7 @@ public class LoginActivity extends BaseActiciy
     {
         super.initData();
         //initPlatforms();
-        UMShareConfig config = new UMShareConfig();
-        config.isNeedAuthOnGetUserInfo(true);
         umShareAPI = UMShareAPI.get(aty);
-        umShareAPI.setShareConfig(config);
     }
 
     //    private void initPlatforms() {
@@ -146,7 +143,7 @@ public class LoginActivity extends BaseActiciy
             public void onSuccess(String t)
             {
                 super.onSuccess(t);
-
+                YHLoadingDialog.cancel();
                 final LoginJosnBen jsonData = JsonUitl.stringToTObject
                         (t, LoginJosnBen.class);
                 String resultCode = jsonData.getResultCode();
@@ -194,7 +191,11 @@ public class LoginActivity extends BaseActiciy
         switch (v.getId())
         {
             case R.id.login_winxin:
-                YHViewInject.create().showTips("登录");
+                //注意：最新版本微信客户端调用接口后也不再出现授权确认页面，
+                // 确认在微信客户端切换账号后，再次调用登录接口获取的用户资料变化即可
+                UMShareConfig config = new UMShareConfig();
+                config.isNeedAuthOnGetUserInfo(true);
+                umShareAPI.setShareConfig(config);
                 umShareAPI.getPlatformInfo(aty, SHARE_MEDIA.WEIXIN, authListener);
                 break;
         }
