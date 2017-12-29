@@ -154,10 +154,9 @@ public class TerminalActivity extends BaseActiciy implements
                             public void onSuccess(String t)
                             {
                                 super.onSuccess(t);
-
                                 final TerminalJosnBen jsonData = JsonUitl.stringToTObject
                                         (t, TerminalJosnBen.class);
-                                //LogUtils.e(TAG, jsonData);
+                                LogUtils.e(TAG, jsonData);
                                 String resultCode = jsonData.getResultCode();
                                 if ("0".equals(resultCode))
                                 {
@@ -165,21 +164,18 @@ public class TerminalActivity extends BaseActiciy implements
                                     {
                                         id_empty_text.setText("暂无终端!");
                                         mRecyclerView.setEmptyView(empty_layout);//没有数据的空布局
-                                    }
-                                    else
+                                    } else
                                     {
                                         data.addAll(jsonData.getDatas());
                                         mAdapter.setDatas(data);
                                     }
-                                }
-                                else
+                                } else
                                 {
                                     id_empty_text.setText("Code:" + resultCode);
                                     mRecyclerView.setEmptyView(empty_layout);
                                 }
                                 //刷新完毕
-                                mRecyclerView.reset();
-                                //LogUtils.e(TAG,"FASDFADSFADSF:"+mAdapter.getDatas());
+                                mRecyclerView.refreshComplete();
                             }
 
                             @Override
