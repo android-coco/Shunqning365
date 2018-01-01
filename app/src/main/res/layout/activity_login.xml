@@ -13,7 +13,7 @@
         layout="@layout/basetitle"
         android:visibility="gone"/>
 
-    <net.shunqing365.guard.view.ZQImageViewRoundOval
+    <org.yh.library.view.YHImageViewRoundOval
         android:id="@+id/img_bg"
         android:layout_width="128dp"
         android:layout_height="128dp"

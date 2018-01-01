@@ -13,17 +13,9 @@ public class AppUtil
     public static final String API_URL = BASE_URL + "/interface";
     //登录
     public static final String LOGIN = "/login";
-    //我的终端
-    public static final String TERMINAL_LIST = "/terminal_data";
-    //添加终端
-    public static final String TERMINAL_ADD = "/terminal_addnew";
-    //删除终端
-    public static final String TERMINAL_DEL = "/terminal_unbound";
 
 
 
-    //记录用户信息
-    public static final String USER_XML = "user";
     //用户信息uid
     public static final String UID = "uid";
     //用户信息unionid

@@ -14,7 +14,6 @@ import net.shunqing365.guard.R;
 import net.shunqing365.guard.adapter.CustomDialogFactory;
 import net.shunqing365.guard.bean.LoginJosnBen;
 import net.shunqing365.guard.util.AppUtil;
-import net.shunqing365.guard.view.ZQImageViewRoundOval;
 
 import org.yh.library.okhttp.YHRequestFactory;
 import org.yh.library.okhttp.callback.HttpCallBack;
@@ -24,12 +23,15 @@ import org.yh.library.utils.JsonUitl;
 import org.yh.library.utils.LogUtils;
 import org.yh.library.utils.PreferenceUtils;
 import org.yh.library.utils.StringUtils;
+import org.yh.library.view.YHImageViewRoundOval;
 import org.yh.library.view.loading.dialog.YHLoadingDialog;
 import org.zackratos.ultimatebar.UltimateBar;
 
 import java.util.Map;
 
+import yh.org.shunqinglib.aty.LocationByGD2Activity;
 import yh.org.shunqinglib.base.BaseActiciy;
+import yh.org.shunqinglib.utils.GlobalUtils;
 
 /**
  * 登录
@@ -43,7 +45,7 @@ public class LoginActivity extends BaseActiciy
     @BindView(id = R.id.login_winxin, click = true)
     TextView login_winxin;//登录
     @BindView(id = R.id.img_bg)
-    private ZQImageViewRoundOval iv_roundRect;//圆角矩形图片
+    private YHImageViewRoundOval iv_roundRect;//圆角矩形图片
     UMShareAPI umShareAPI;
 
     @Override
@@ -150,10 +152,14 @@ public class LoginActivity extends BaseActiciy
                 if ("0".equals(resultCode))
                 {
                     YHViewInject.create().showTips("登录成功");//跳转
-                    PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.UID,jsonData.getUid());
-                    PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.UNIONID,data.get("unionid"));
-                    PreferenceUtils.write(aty,AppUtil.USER_XML,AppUtil.OPENID,data.get("openid"));
-                    skipActivity(aty, TerminalActivity.class);
+                    PreferenceUtils.write(aty, GlobalUtils.USER_XML,AppUtil.UID,jsonData.getUid());
+                    PreferenceUtils.write(aty,GlobalUtils.USER_XML,AppUtil.UNIONID,data.get("unionid"));
+                    PreferenceUtils.write(aty,GlobalUtils.USER_XML,AppUtil.OPENID,data.get("openid"));
+                    GlobalUtils.HOME_HOST = "http://www.shunqing365.net";//接口地址
+                    GlobalUtils.USER_UID = jsonData.getUid();//用户ID
+                    GlobalUtils.PACKAGE_STR = "net.shunqing365.guard";
+                    GlobalUtils.LOGIN_ACTIVITY_NAME ="net.shunqing365.guard.ui.LoginActivity";
+                    skipActivity(aty, LocationByGD2Activity.class);
                 } else
                 {
                     YHViewInject.create().showTips("登录失败");
@@ -180,7 +186,7 @@ public class LoginActivity extends BaseActiciy
     public void initWidget()
     {
         super.initWidget();
-        iv_roundRect.setType(ZQImageViewRoundOval.TYPE_ROUND);
+        iv_roundRect.setType(YHImageViewRoundOval.TYPE_ROUND);
         iv_roundRect.setRoundRadius(20);//矩形凹行大小
     }
 
